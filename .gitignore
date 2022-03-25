@@ -1,0 +1,25 @@
+# Rust and Cargo
+target/
+**/*.rs.bk
+.cargo-ok
+# Comment out the following line if executable
+Cargo.lock
+
+# Environment variables
+.env
+.env*
+!.env.example
+
+# Logs
+logs/
+
+# IDEs and Editors
+.idea/
+.vscode/*
+
+## Misc
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+._*

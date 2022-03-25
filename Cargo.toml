@@ -1,0 +1,38 @@
+[package]
+name = "lucy"
+version = "0.1.0"
+edition = "2021"
+description = """
+Lucy is a learning project meant to provide insight into Nom's parsing
+strategies and gain a deeper understanding of how to use the library effecively.
+Goals of Lucy include learning about parser-combinators, composing them together
+and achieving the desired, and correct, results.
+"""
+repository = "https://github.com/dark-fusion/lucy"
+license = "MIT"
+# Default is "2" if root package specifies edition = "2021" (or newer)
+#resolver = "2"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+path = "src/lib.rs"
+doctest = false # Remove this line when doc comments with tests are added
+
+[dependencies]
+nom = "7"
+
+[profile.bench]
+debug = true
+lto = true
+codegen-units = 1
+
+[profile.dev]
+# Disabling debug info speeds up builds a bunch,
+# and we don't rely on it for debugging that much.
+debug = 0
+# For faster builds on MacOS with incremental building enabled
+split-debuginfo = "unpacked"
+
+[profile.release]
+incremental = true
+debug = 0 # Set this to 1 or 2 to get more useful backtraces in debugger.
