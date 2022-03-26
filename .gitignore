@@ -13,6 +13,9 @@ Cargo.lock
 # Logs
 logs/
 
+# Mock data
+mock/
+
 # IDEs and Editors
 .idea/
 .vscode/*
