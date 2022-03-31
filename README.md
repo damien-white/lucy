@@ -1,8 +1,9 @@
 <div align="center">
-  <img src="assets/logo.svg" width="320" alt="Lucy logo" />
-  <h3 align="center">
-    Rust parsing utility built with Nom
-  </h3>
+    <img src="assets/logo.svg" width="320" alt="Lucy logo" />
+    <h2 align="center"> 
+        Connect disparate technologies and services by leveraging webhooks
+        <h3>Automate workflows such as CI jobs and other mundane tasks</h3>
+    </h2>
 
 [![Crates.io](https://img.shields.io/crates/v/lucy.svg)](https://crates.io/crates/lucy)
 [![Docs.rs](https://docs.rs/lucy/badge.svg)](https://docs.rs/lucy)

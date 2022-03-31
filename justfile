@@ -2,7 +2,7 @@ set dotenv-load := false
 set positional-arguments := false
 
 #export RUST_BACKTRACE := "full"
-export RUST_BACKTRACE := "1"
+#export RUST_BACKTRACE := "1"
 
 _default:
     @just --list
