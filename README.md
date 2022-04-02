@@ -1,7 +1,9 @@
 <div align="center">
-    <img src="assets/logo.svg" width="320" alt="Lucy logo" />
+    <hr /><br/>
+    <img src="assets/logo.svg" width="400" alt="Lucy logo" />
+    <hr />
     <h2 align="center">  
-        Parse arbitrary JSON data into structured data that your services understand
+        Parse, inspect and transform arbitrary JSON data
     </h2>
 
 [![Crates.io](https://img.shields.io/crates/v/lucy.svg)](https://crates.io/crates/lucy)
@@ -13,7 +15,32 @@
 
 ## Description
 
-Lucy parses JSON data that is represented as raw bytes, or byte slices.
+Lucy parses JSON data from sources that are represented as raw bytes. Examples of this include, but
+are not limited to files and sockets.
+
+The definition of "valid JSON syntax" is taken directly from the
+official [IETF RFC](https://datatracker.ietf.org/doc/html/rfc8259).
+
+### Project Goals
+
+- Support all JSON data types. These include:
+    - Primitives:
+        - `string`
+        - `number`
+        - `boolean`
+        - `null`
+    - Structured:
+        - `object`
+        - `array`
+- Parse raw bytes into meaningful, structured data
+- Use zero-copy operations whenever possible
+- Avoid excessive memory allocations
+- Provide utilities and helpers for integrating Lucy into your projects
+
+### Project Non-goals:
+
+- Compatibility with `Serde`
+- Support for non-JSON formats
 
 ### Technologies
 
@@ -23,17 +50,6 @@ Lucy is built with:
 - [nom](https://github.com/Geal/nom)
 - [bytes](https://github.com/tokio-rs/bytes)
 - TBA
-
-#### Project Goals:
-
-- Parse arbitrary bytes into useful data
-- Perform zero-copy operations whenever possible
-- Avoid excessive memory allocations
-- Provide utilities and helpers for integrating Lucy into your projects
-
-#### Project Non-goals:
-
-- Compatibility with `Serde`
 
 ## Installation
 
