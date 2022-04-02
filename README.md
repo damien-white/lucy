@@ -1,7 +1,7 @@
 <div align="center">
     <img src="assets/logo.svg" width="320" alt="Lucy logo" />
     <h2 align="center">  
-        Transform JSON payloads into structured data that your service understands
+        Parse arbitrary JSON data into structured data that your services understand
     </h2>
 
 [![Crates.io](https://img.shields.io/crates/v/lucy.svg)](https://crates.io/crates/lucy)
@@ -10,6 +10,30 @@
 [![Coverage Status](https://coveralls.io/repos/github/dark-fusion/lucy/badge.svg?branch=main)](https://coveralls.io/github/dark-fusion/lucy?branch=main)
 
 </div>
+
+## Description
+
+Lucy parses JSON data that is represented as raw bytes, or byte slices.
+
+### Technologies
+
+Lucy is built with:
+
+- [Rust programming language](https://rust-lang.org/)
+- [nom](https://github.com/Geal/nom)
+- [bytes](https://github.com/tokio-rs/bytes)
+- TBA
+
+#### Project Goals:
+
+- Parse arbitrary bytes into useful data
+- Perform zero-copy operations whenever possible
+- Avoid excessive memory allocations
+- Provide utilities and helpers for integrating Lucy into your projects
+
+#### Project Non-goals:
+
+- Compatibility with `Serde`
 
 ## Installation
 
