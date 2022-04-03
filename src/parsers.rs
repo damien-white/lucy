@@ -1,9 +1,13 @@
 use nom::branch::alt;
-use nom::bytes::complete::escaped;
-use nom::bytes::complete::{is_not, take_while};
-use nom::character::complete::{alphanumeric1, one_of};
-use nom::sequence::delimited;
-use nom::{bytes::complete::tag, combinator::value, IResult};
+use nom::character::complete::{alphanumeric1, char, one_of};
+use nom::combinator::cut;
+use nom::error::context;
+use nom::sequence::{delimited, preceded, terminated};
+use nom::{
+    bytes::complete::{escaped, is_not, tag, take_while},
+    combinator::value,
+    IResult,
+};
 
 pub fn boolean(i: &[u8]) -> IResult<&[u8], bool> {
     let parse_true = value(true, tag("true"));
@@ -16,13 +20,25 @@ pub fn nullish(i: &[u8]) -> IResult<&[u8], ()> {
     value((), tag("null"))(i)
 }
 
-pub fn string(i: &[u8]) -> IResult<&[u8], &[u8]> {
-    escaped(alphanumeric1, '\\', one_of("\"n\\"))(i)
+// TODO: Start here where you left off and begin writing tests
+pub fn string<'a>(i: &'a [u8]) -> IResult<&'a [u8], &'a [u8]> {
+    let string_inner = move |i: &'a [u8]| -> IResult<&[u8], &[u8]> {
+        escaped(alphanumeric1, '\\', one_of("\"n\\"))(i)
+    };
+
+    context(
+        "string",
+        preceded(char('\"'), cut(terminated(string_inner, char('\"')))),
+    )(i)
 }
 
 pub fn object(i: &[u8]) -> IResult<&[u8], &[u8]> {
     delimited(tag("{"), is_not("}"), tag("}"))(i)
 }
+
+// pub fn array(i: &[u8]) -> IResult<&[u8], &[u8]> {}
+
+// pub fn number(i: &[u8]) -> IResult<&[u8], f32> {}
 
 pub fn whitespace(i: &[u8]) -> IResult<&[u8], &[u8]> {
     let tokens = [b' ', b'\t', b'\r', b'\n'].as_slice();
@@ -32,6 +48,8 @@ pub fn whitespace(i: &[u8]) -> IResult<&[u8], &[u8]> {
 
 #[cfg(test)]
 mod tests {
+    use std::assert_eq;
+
     use nom::error::{Error, ErrorKind};
 
     use super::*;
