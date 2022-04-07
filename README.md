@@ -15,8 +15,12 @@
 
 ## Description
 
-Lucy parses JSON data from sources that are represented as raw bytes. Examples of this include, but
-are not limited to files and sockets.
+Lucy is a lightweight, fast, efficient JSON parser and adapter service.
+
+Lucy parses data in JSON format data sources that produce raw bytes, such as network sockets. This
+allows it to very easily integrate with new and existing systems.
+
+### JSON Syntax
 
 The definition of "valid JSON syntax" is taken directly from the
 official [IETF RFC](https://datatracker.ietf.org/doc/html/rfc8259).
@@ -35,12 +39,18 @@ official [IETF RFC](https://datatracker.ietf.org/doc/html/rfc8259).
 - Parse raw bytes into meaningful, structured data
 - Use zero-copy operations whenever possible
 - Avoid excessive memory allocations
-- Provide utilities and helpers for integrating Lucy into your projects
+- Provide utilities and helpers for integrating Lucy into your projects<br/><br/>
+
+#### Under Consideration
+
+- Provide a `JSON` to `RON` transcoder implementation
+    - [ron-rs organization](https://github.com/ron-rs)
+    - [RON specification](https://github.com/ron-rs/ron/wiki/Specification)
+    - [RON grammar](https://github.com/ron-rs/ron/blob/master/docs/grammar.md)
 
 ### Project Non-goals:
 
 - Compatibility with `Serde`
-- Support for non-JSON formats
 
 ### Technologies
 

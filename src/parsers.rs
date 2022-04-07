@@ -1,13 +1,18 @@
-use nom::branch::alt;
-use nom::character::complete::{alphanumeric1, char, one_of};
-use nom::combinator::cut;
-use nom::error::context;
-use nom::sequence::{delimited, preceded, terminated};
+use std::collections::HashMap;
+
+use nom::bytes::complete::take_while;
 use nom::{
-    bytes::complete::{escaped, is_not, tag, take_while},
+    branch::alt,
+    bytes::complete::{escaped, tag},
+    character::complete::{alphanumeric1, char as char_tag, one_of},
     combinator::value,
+    combinator::{cut, map},
+    multi::separated_list0,
+    sequence::{preceded, separated_pair, terminated},
     IResult,
 };
+
+use crate::types::Type;
 
 pub fn boolean(i: &[u8]) -> IResult<&[u8], bool> {
     let parse_true = value(true, tag("true"));
@@ -20,36 +25,80 @@ pub fn nullish(i: &[u8]) -> IResult<&[u8], ()> {
     value((), tag("null"))(i)
 }
 
-// TODO: Start here where you left off and begin writing tests
 pub fn string<'a>(i: &'a [u8]) -> IResult<&'a [u8], &'a [u8]> {
-    let string_inner = move |i: &'a [u8]| -> IResult<&[u8], &[u8]> {
-        escaped(alphanumeric1, '\\', one_of("\"n\\"))(i)
+    let string_inner = move |inner: &'a [u8]| -> IResult<&[u8], &[u8]> {
+        escaped(alphanumeric1, '\\', one_of("\"n\\"))(inner)
     };
 
-    context(
-        "string",
-        preceded(char('\"'), cut(terminated(string_inner, char('\"')))),
+    preceded(
+        char_tag('\"'),
+        cut(terminated(string_inner, char_tag('\"'))),
     )(i)
 }
 
-pub fn object(i: &[u8]) -> IResult<&[u8], &[u8]> {
-    delimited(tag("{"), is_not("}"), tag("}"))(i)
+pub fn key_value_pair(i: &[u8]) -> IResult<&[u8], (&[u8], Type)> {
+    separated_pair(
+        preceded(whitespace, string),
+        cut(preceded(whitespace, char_tag(':'))),
+        json_value,
+    )(i)
 }
 
-// pub fn array(i: &[u8]) -> IResult<&[u8], &[u8]> {}
+pub fn object(i: &[u8]) -> IResult<&[u8], HashMap<&str, Type>> {
+    preceded(
+        char_tag('{'),
+        cut(terminated(
+            map(
+                separated_list0(preceded(whitespace, char_tag(',')), key_value_pair),
+                |tuple_vec| {
+                    tuple_vec
+                        .into_iter()
+                        .map(|(k, v)| (std::str::from_utf8(k).unwrap_or_default(), v))
+                        .collect()
+                },
+            ),
+            preceded(whitespace, char_tag('}')),
+        )),
+    )(i)
+}
+
+pub fn array(i: &[u8]) -> IResult<&[u8], Vec<Type>> {
+    preceded(
+        char_tag('['),
+        cut(terminated(
+            separated_list0(preceded(whitespace, char_tag(',')), json_value),
+            preceded(whitespace, char_tag(']')),
+        )),
+    )(i)
+}
 
 // pub fn number(i: &[u8]) -> IResult<&[u8], f32> {}
 
-pub fn whitespace(i: &[u8]) -> IResult<&[u8], &[u8]> {
-    let tokens = [b' ', b'\t', b'\r', b'\n'].as_slice();
+pub fn json_value(i: &[u8]) -> IResult<&[u8], Type> {
+    preceded(
+        whitespace,
+        alt((
+            map(array, Type::Array),
+            map(boolean, Type::Boolean),
+            map(nullish, |_| Type::Null),
+            map(string, |val| {
+                Type::String(std::str::from_utf8(val).unwrap_or_default())
+            }),
+        )),
+    )(i)
+}
 
-    take_while(move |t: u8| tokens.contains(&t))(i)
+pub fn whitespace(i: &[u8]) -> IResult<&[u8], &[u8]> {
+    take_while(is_whitespace)(i)
+}
+
+#[inline]
+fn is_whitespace(ch: u8) -> bool {
+    ch == b' ' || ch == b'\t' || ch == b'\r' || ch == b'\n'
 }
 
 #[cfg(test)]
 mod tests {
-    use std::assert_eq;
-
     use nom::error::{Error, ErrorKind};
 
     use super::*;

@@ -3,14 +3,10 @@ name = "lucy"
 version = "0.1.0"
 edition = "2021"
 description = """
-Lucy is a small, efficient parser for handling arbitrary JSON data. It serves
-as an adapter layer, or middleware, that transforms incoming data into a format
-that can be understood by an arbitrary service.
+Fast and efficient JSON parser and adapter service.
 """
 repository = "https://github.com/dark-fusion/lucy"
 license = "MIT"
-# Default is "2" if root package specifies edition = "2021" (or newer)
-#resolver = "2"
 
 #[lib]
 #path = "src/lib.rs"
@@ -35,3 +31,4 @@ split-debuginfo = "unpacked"
 [profile.release]
 incremental = true
 debug = 0 # Set this to 1 or 2 to get more useful backtraces in debugger.
+lto = true

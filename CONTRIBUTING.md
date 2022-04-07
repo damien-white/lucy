@@ -1,16 +1,19 @@
 # Contribution guidelines
 
-First off, thank you for considering contributing to lucy.
+We sincerely appreciate any and all community contributions. `Lucy` is, and always will be, a fully
+open-sourced project. As such, your contribution(s) are invaluable.
 
-If your contribution is not straightforward, please first discuss the change you
-wish to make by creating a new issue before making the change.
+To ensure that your contribution is accepted, we ask that you please open a ticket that includes a
+brief description of all change(s) that you would like to introduce.
+
+This process allows for any necessary discussions to take place and also helps to clarify the "what"
+, "why" and "how" your changes can be integrated with the existing codebase.
 
 ## Reporting issues
 
 Before reporting an issue on the
-[issue tracker](https://github.com/dark-fusion/lucy/issues),
-please check that it has not already been reported by searching for some related
-keywords.
+[issue tracker](https://github.com/dark-fusion/lucy/issues), please check that it has not already
+been reported by searching for some related keywords.
 
 ## Pull requests
 
@@ -22,8 +25,8 @@ Update the changes you have made in
 [CHANGELOG](https://github.com/dark-fusion/lucy/blob/main/CHANGELOG.md)
 file under the **Unreleased** section.
 
-Add the changes of your pull request to one of the following subsections,
-depending on the types of changes defined by
+Add the changes of your pull request to one of the following subsections, depending on the types of
+changes defined by
 [Keep a changelog](https://keepachangelog.com/en/1.0.0/):
 
 - `Added` for new features.
