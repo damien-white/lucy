@@ -22,8 +22,8 @@ allows it to very easily integrate with new and existing systems.
 
 ### JSON Syntax
 
-The definition of "valid JSON syntax" is taken directly from the
-official [IETF RFC](https://datatracker.ietf.org/doc/html/rfc8259).
+The specification that defines valid JSON syntax and the format itself can be found
+within [IETF RFC 8259](https://datatracker.ietf.org/doc/html/rfc8259).
 
 ### Project Goals
 
