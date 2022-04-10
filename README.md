@@ -3,7 +3,7 @@
     <img src="assets/logo.svg" width="400" alt="Lucy logo" />
     <hr />
     <h2 align="center">  
-        Parse, inspect and transform arbitrary JSON data
+        JSON validation and processing service
     </h2>
 
 [![Crates.io](https://img.shields.io/crates/v/lucy.svg)](https://crates.io/crates/lucy)
@@ -15,10 +15,10 @@
 
 ## Description
 
-Lucy is a lightweight, fast, efficient JSON parser and adapter service.
+Lucy is a fast, efficient JSON validation and processing service.
 
-Lucy parses data in JSON format data sources that produce raw bytes, such as network sockets. This
-allows it to very easily integrate with new and existing systems.
+Lucy parses JSON from sources that produce raw bytes, such as network sockets. This allows Lucy to
+easily integrate with new and existing systems.
 
 ### JSON Syntax
 

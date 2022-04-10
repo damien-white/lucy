@@ -3,7 +3,7 @@ name = "lucy"
 version = "0.1.0"
 edition = "2021"
 description = """
-Fast and efficient JSON parser and adapter service.
+Fast and efficient JSON validation and processing service.
 """
 repository = "https://github.com/dark-fusion/lucy"
 license = "MIT"
