@@ -2,9 +2,6 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-/// The `Map<'a, V>` type is an alias for the JSON `object` type.
-pub(crate) type Map<'a, V = Type<'a>> = HashMap<&'a str, V>;
-
 /// This enum represents all valid [JSON data types][types].
 ///
 /// various data types defined in the official
@@ -12,17 +9,30 @@ pub(crate) type Map<'a, V = Type<'a>> = HashMap<&'a str, V>;
 ///
 /// [types]: https://datatracker.ietf.org/doc/html/rfc8259
 #[derive(Debug, PartialEq)]
-pub enum Type<'a> {
+pub enum Value<'a> {
     /// Structured `array` type
-    Array(Vec<Type<'a>>),
+    Array(Vec<Value<'a>>),
     /// Primitive `boolean` type
     Boolean(bool),
     /// Structured `object` type
-    Object(Map<'a>),
+    Object(HashMap<&'a str, Value<'a>>),
     /// Primitive `null` type
     Null,
     /// Primitive `number` type
-    Number(f32),
+    Number(f64),
     /// Primitive `string` type
     String(&'a str),
+}
+
+impl<'a> Value<'a> {
+    pub fn repr(&self) -> &'a str {
+        match *self {
+            Value::Array(_) => "array",
+            Value::Boolean(_) => "boolean",
+            Value::Object(_) => "object",
+            Value::Null => "null",
+            Value::Number(_) => "number",
+            Value::String(_) => "string",
+        }
+    }
 }

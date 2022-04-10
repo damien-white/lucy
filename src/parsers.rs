@@ -1,11 +1,12 @@
 //! Parsers for the JSON primitive and structural types.
 use std::collections::HashMap;
 
-use nom::bytes::complete::take_while;
+use nom::bytes::complete::{take_while, take_while1};
+use nom::combinator::map_res;
 use nom::{
     branch::alt,
     bytes::complete::{escaped, tag},
-    character::complete::{alphanumeric1, char as char_tag, one_of},
+    character::complete::{char as char_tag, one_of},
     combinator::value,
     combinator::{cut, map},
     multi::separated_list0,
@@ -13,96 +14,86 @@ use nom::{
     IResult,
 };
 
-use crate::types::Type;
+use crate::types::Value;
 
-pub fn array(i: &[u8]) -> IResult<&[u8], Vec<Type>> {
+pub fn array(input: &[u8]) -> IResult<&[u8], Vec<Value>> {
     preceded(
         char_tag('['),
         cut(terminated(
             separated_list0(preceded(whitespace, char_tag(',')), json_value),
             preceded(whitespace, char_tag(']')),
         )),
-    )(i)
+    )(input)
 }
 
-pub fn boolean(i: &[u8]) -> IResult<&[u8], bool> {
+pub fn boolean(input: &[u8]) -> IResult<&[u8], bool> {
     let parse_true = value(true, tag("true"));
     let parse_false = value(false, tag("false"));
 
-    alt((parse_true, parse_false))(i)
+    alt((parse_true, parse_false))(input)
 }
 
-pub fn object(i: &[u8]) -> IResult<&[u8], HashMap<&str, Type>> {
+pub fn object(input: &[u8]) -> IResult<&[u8], HashMap<&str, Value>> {
     preceded(
         char_tag('{'),
         cut(terminated(
             map(
                 separated_list0(preceded(whitespace, char_tag(',')), key_value_pair),
-                |tuple_vec| {
-                    tuple_vec
-                        .into_iter()
-                        .map(|(k, v)| (std::str::from_utf8(k).unwrap_or_default(), v))
-                        .collect()
-                },
+                |tuple_vec| tuple_vec.into_iter().map(|(k, v)| (k, v)).collect(),
             ),
             preceded(whitespace, char_tag('}')),
         )),
-    )(i)
+    )(input)
 }
 
-pub fn nullish(i: &[u8]) -> IResult<&[u8], ()> {
-    value((), tag("null"))(i)
+pub fn null(input: &[u8]) -> IResult<&[u8], ()> {
+    value((), tag("null"))(input)
 }
 
-// pub fn number(i: &[u8]) -> IResult<&[u8], f32> {}
+// pub fn number(input: &[u8]) -> IResult<&[u8], f32> {}
 
-pub fn string(i: &[u8]) -> IResult<&[u8], &[u8]> {
+pub fn string(input: &[u8]) -> IResult<&[u8], &str> {
     preceded(
         char_tag('\"'),
-        cut(terminated(nested_string, char_tag('\"'))),
-    )(i)
+        cut(terminated(
+            map_res(
+                escaped(take_while1(is_string_char), '\\', one_of("\"bfnrt\\")),
+                std::str::from_utf8,
+            ),
+            char_tag('\"'),
+        )),
+    )(input)
 }
-
-pub fn nested_string(i: &[u8]) -> IResult<&[u8], &[u8]> {
-    escaped(alphanumeric1, '\\', one_of(r#"\"n"#))(i)
-}
-
-// fn sanitize_quotes(i: &[u8]) -> IResult<&[u8], &[u8]> {
-//     let double_quote = char_tag('\"');
-//     let single_quote = char_tag('\'');
-//
-//     escaped_transform(
-//         alphanumeric1,
-//         '\\',
-//         consumed(alt((double_quote, single_quote))),
-//     )(i)
-// }
 
 // ===== Utility functions and miscellaneous parsers =====
-pub fn key_value_pair(i: &[u8]) -> IResult<&[u8], (&[u8], Type)> {
+pub fn key_value_pair(input: &[u8]) -> IResult<&[u8], (&str, Value)> {
     separated_pair(
         preceded(whitespace, string),
         cut(preceded(whitespace, char_tag(':'))),
         json_value,
-    )(i)
+    )(input)
 }
 
-pub fn json_value(i: &[u8]) -> IResult<&[u8], Type> {
+pub fn json_value(input: &[u8]) -> IResult<&[u8], Value> {
     preceded(
         whitespace,
         alt((
-            map(array, Type::Array),
-            map(boolean, Type::Boolean),
-            map(nullish, |_| Type::Null),
-            map(string, |val| {
-                Type::String(std::str::from_utf8(val).unwrap_or_default())
-            }),
+            map(array, Value::Array),
+            map(boolean, Value::Boolean),
+            map(object, Value::Object),
+            map(null, |_| Value::Null),
+            map(string, Value::String),
         )),
-    )(i)
+    )(input)
 }
 
-pub fn whitespace(i: &[u8]) -> IResult<&[u8], &[u8]> {
-    take_while(is_whitespace)(i)
+pub fn whitespace(input: &[u8]) -> IResult<&[u8], &[u8]> {
+    take_while(is_whitespace)(input)
+}
+
+#[inline]
+fn is_string_char(c: u8) -> bool {
+    c != b'"' && c != b'\\'
 }
 
 #[inline]
@@ -139,13 +130,13 @@ mod tests {
 
     #[test]
     fn nullish_types() {
-        assert_eq!(nullish(&b"nullabcd"[..]), Ok((&b"abcd"[..], ())));
+        assert_eq!(null(&b"nullabcd"[..]), Ok((&b"abcd"[..], ())));
         assert_eq!(
-            nullish(&b"abcdef"[..]),
+            null(&b"abcdef"[..]),
             Err(nom::Err::Error(Error::new(&b"abcdef"[..], ErrorKind::Tag)))
         );
         assert_eq!(
-            nullish(&b"abcdnull"[..]),
+            null(&b"abcdnull"[..]),
             Err(nom::Err::Error(Error::new(
                 &b"abcdnull"[..],
                 ErrorKind::Tag,
@@ -156,10 +147,17 @@ mod tests {
     #[test]
     fn string_types() {
         assert_eq!(
-            string(r#""lysergic""#.as_bytes()),
-            Ok((&b""[..], &b"lysergic"[..]))
+            string(r#""0123456789abcdef""#.as_bytes()),
+            Ok((&b""[..], "0123456789abcdef"))
         );
-        assert!(string(&br#""0x00 0x01 0x04 0xDE 0xAD""#[..]).is_err());
+        assert_eq!(
+            string(&br#""0x00 0x01 0x04 0xDE 0xAD""#[..]),
+            Ok((&b""[..], "0x00 0x01 0x04 0xDE 0xAD"))
+        );
+        assert_eq!(
+            string(&br#""'0x00 0x01 0x04 0xDE 0xAD'""#[..]),
+            Ok((&b""[..], "'0x00 0x01 0x04 0xDE 0xAD'"))
+        );
     }
 
     #[test]

@@ -8,10 +8,6 @@ Fast and efficient JSON parser and adapter service.
 repository = "https://github.com/dark-fusion/lucy"
 license = "MIT"
 
-#[lib]
-#path = "src/lib.rs"
-#doctest = false # Remove this line when doc comments with tests are added
-
 [dependencies]
 bytes = "1"
 nom = "7"

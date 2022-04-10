@@ -38,38 +38,23 @@ within [IETF RFC 8259](https://datatracker.ietf.org/doc/html/rfc8259).
         - `array`
 - Parse raw bytes into meaningful, structured data
 - Use zero-copy operations whenever possible
+    - These optimizations will be "best-effort" until the release of an MVP
 - Avoid excessive memory allocations
-- Provide utilities and helpers for integrating Lucy into your projects<br/><br/>
-
-#### Under Consideration
-
-- Provide a `JSON` to `RON` transcoder implementation
-    - [ron-rs organization](https://github.com/ron-rs)
-    - [RON specification](https://github.com/ron-rs/ron/wiki/Specification)
-    - [RON grammar](https://github.com/ron-rs/ron/blob/master/docs/grammar.md)
-
-### Project Non-goals:
-
-- Compatibility with `Serde`
+- Provide utilities and helpers for integrating Lucy into your projects
 
 ### Technologies
 
-Lucy is built with:
+Lucy is written in [Rust](https://rust-lang.org/) for its ability to provide high-speed runtime
+performance, resource efficiency and various memory-safety guarantees.
 
-- [Rust programming language](https://rust-lang.org/)
+Rust's vibrant ecosystem contains support for asynchronous IO and parallel processing (concurrency
+and parallelism).
+
+#### External Dependencies
+
+Lucy depends on a few well-maintained crates:
+
 - [nom](https://github.com/Geal/nom)
-- [bytes](https://github.com/tokio-rs/bytes)
-- TBA
-
-## Installation
-
-### Prerequisites
-
-1. You must have cargo installed and an up-to-date version of Rust.
-    - Please visit the official website
-      for [installation instructions](https://www.rust-lang.org/tools/install).
-2. Ensure the project compiles. From the project root directory, run:
-    - `cargo build` or `just compile`
 
 ## License
 
