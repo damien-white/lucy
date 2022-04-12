@@ -6,7 +6,7 @@ use nom::combinator::map_res;
 use nom::{
     branch::alt,
     bytes::complete::{escaped, tag},
-    character::complete::{char as char_tag, one_of},
+    character::complete::{char as recognize_char, one_of},
     combinator::value,
     combinator::{cut, map},
     multi::separated_list0,
@@ -16,51 +16,54 @@ use nom::{
 
 use crate::types::Value;
 
+/// Parses a JSON value with the `array` type.
 pub fn array(input: &[u8]) -> IResult<&[u8], Vec<Value>> {
     preceded(
-        char_tag('['),
+        recognize_char('['),
         cut(terminated(
-            separated_list0(preceded(whitespace, char_tag(',')), json_value),
-            preceded(whitespace, char_tag(']')),
+            separated_list0(preceded(whitespace, recognize_char(',')), json_value),
+            preceded(whitespace, recognize_char(']')),
         )),
     )(input)
 }
 
+/// Parses a JSON value with the `boolean` type.
 pub fn boolean(input: &[u8]) -> IResult<&[u8], bool> {
-    let parse_true = value(true, tag("true"));
-    let parse_false = value(false, tag("false"));
-
-    alt((parse_true, parse_false))(input)
+    alt((value(true, tag(b"true")), value(false, tag(b"false"))))(input)
 }
 
+/// Parses a JSON value with the `object` type.
 pub fn object(input: &[u8]) -> IResult<&[u8], HashMap<&str, Value>> {
     preceded(
-        char_tag('{'),
+        recognize_char('{'),
         cut(terminated(
             map(
-                separated_list0(preceded(whitespace, char_tag(',')), key_value_pair),
+                separated_list0(preceded(whitespace, recognize_char(',')), key_value_pair),
                 |tuple_vec| tuple_vec.into_iter().map(|(k, v)| (k, v)).collect(),
             ),
-            preceded(whitespace, char_tag('}')),
+            preceded(whitespace, recognize_char('}')),
         )),
     )(input)
 }
 
+/// Parses a JSON value with the `null` type.
 pub fn null(input: &[u8]) -> IResult<&[u8], ()> {
     value((), tag("null"))(input)
 }
 
+/// Parses a JSON value with the `number` type.
 // pub fn number(input: &[u8]) -> IResult<&[u8], f32> {}
 
+/// Parses a JSON value with the `string` type.
 pub fn string(input: &[u8]) -> IResult<&[u8], &str> {
     preceded(
-        char_tag('\"'),
+        recognize_char('\"'),
         cut(terminated(
             map_res(
                 escaped(take_while1(is_string_char), '\\', one_of("\"bfnrt\\")),
                 std::str::from_utf8,
             ),
-            char_tag('\"'),
+            recognize_char('\"'),
         )),
     )(input)
 }
@@ -69,7 +72,7 @@ pub fn string(input: &[u8]) -> IResult<&[u8], &str> {
 pub fn key_value_pair(input: &[u8]) -> IResult<&[u8], (&str, Value)> {
     separated_pair(
         preceded(whitespace, string),
-        cut(preceded(whitespace, char_tag(':'))),
+        cut(preceded(whitespace, recognize_char(':'))),
         json_value,
     )(input)
 }

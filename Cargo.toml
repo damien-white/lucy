@@ -9,7 +9,6 @@ repository = "https://github.com/dark-fusion/lucy"
 license = "MIT"
 
 [dependencies]
-bytes = "1"
 nom = "7"
 
 [profile.bench]

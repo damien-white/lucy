@@ -27,34 +27,35 @@ within [IETF RFC 8259](https://datatracker.ietf.org/doc/html/rfc8259).
 
 ### Project Goals
 
-- Support all JSON data types. These include:
-    - Primitives:
-        - `string`
-        - `number`
-        - `boolean`
-        - `null`
-    - Structured:
-        - `object`
-        - `array`
-- Parse raw bytes into meaningful, structured data
-- Use zero-copy operations whenever possible
-    - These optimizations will be "best-effort" until the release of an MVP
-- Avoid excessive memory allocations
-- Provide utilities and helpers for integrating Lucy into your projects
+- Full support for JSON data types
+    - `array`, `boolean`, `null`, `number`, `object`, `string`
+- Expose an intuitive API that integrates easily with new and existing projects
+- General optimization of internal functions for speed and resource-efficiency
+    - Zero-copy operations
+    - Limit number of allocations
+    - Usage of `#[inline]` for hot paths and cold paths
+- Limit the usage of third-party crates
+    - External crates should only be pulled in if deemed absolutely necessary
 
-### Technologies
+**Please note**: Optimizations will be made wherever possible but will be "best-effort" until an MVP
+is released.
 
-Lucy is written in [Rust](https://rust-lang.org/) for its ability to provide high-speed runtime
-performance, resource efficiency and various memory-safety guarantees.
+## Technologies
+
+### Languages and Tools
+
+Lucy is written in [Rust](https://rust-lang.org/) for its high-performance at runtime, resource
+efficiency and memory-safety.
 
 Rust's vibrant ecosystem contains support for asynchronous IO and parallel processing (concurrency
 and parallelism).
 
-#### External Dependencies
+### External Dependencies
 
 Lucy depends on a few well-maintained crates:
 
 - [nom](https://github.com/Geal/nom)
+- TBA
 
 ## License
 
