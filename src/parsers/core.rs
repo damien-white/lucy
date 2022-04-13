@@ -51,8 +51,6 @@ pub fn null(input: &[u8]) -> IResult<&[u8], ()> {
 /// Parses a JSON value with the `number` type.
 pub fn number(input: &[u8]) -> IResult<&[u8], f64> {
     double(input)
-    // let num = |num: &str| num.parse::<f64>();
-    // map_res()(input)
 }
 
 /// Parses a JSON value with the `string` type.
@@ -117,6 +115,28 @@ mod tests {
     use nom::Err;
 
     use super::*;
+
+    #[test]
+    fn array_values() {
+        assert_eq!(
+            array(&b"[5, 42, 97.5]abcd"[..]),
+            Ok((
+                &b"abcd"[..],
+                vec![
+                    Value::Number(5_f64),
+                    Value::Number(42_f64),
+                    Value::Number(97.5_f64),
+                ]
+            ))
+        );
+        assert_eq!(
+            array(&b"[true, \"lucy\", null]abcd"[..]),
+            Ok((
+                &b"abcd"[..],
+                vec![Value::Boolean(true), Value::String("lucy"), Value::Null,]
+            ))
+        );
+    }
 
     #[test]
     fn boolean_values() {
