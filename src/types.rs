@@ -8,7 +8,7 @@ use std::fmt::Debug;
 /// specification for the JSON format.
 ///
 /// [types]: https://datatracker.ietf.org/doc/html/rfc8259
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Value<'a> {
     /// Structured `array` type
     Array(Vec<Value<'a>>),
