@@ -1,3 +1,5 @@
+//! Parsers and functions specific to escaped unicode sequences.
+
 use nom::bytes::complete::take_while_m_n;
 use nom::character::complete::char as token;
 use nom::combinator::map_res;

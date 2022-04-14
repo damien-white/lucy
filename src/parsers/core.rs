@@ -73,7 +73,7 @@ pub(crate) fn key_value_pair(input: &str) -> IResult<&str, (&str, Value)> {
     )(input)
 }
 
-pub fn json_value(input: &str) -> IResult<&str, Value> {
+pub(crate) fn json_value(input: &str) -> IResult<&str, Value> {
     preceded(
         whitespace,
         alt((

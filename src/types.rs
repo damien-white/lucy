@@ -1,4 +1,4 @@
-//! This module holds JSON type definitions and related utility functions.
+//! JSON type definitions used to construct Rust types.
 use std::collections::HashMap;
 use std::fmt::Debug;
 
