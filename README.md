@@ -1,10 +1,13 @@
 <div align="center">
-    <hr /><br/>
-    <img src="assets/logo.svg" width="400" alt="Lucy logo" />
-    <hr />
-    <h3 align="center">  
-         JSON parser service for simplifying your data pipelines
-    </h3>
+      <h1>Lucy</h1>
+      <h2>Please see
+        <a
+          href="https://github.com/dark-fusion/elucidate"
+          referrerpolicy="no-referrer"
+          target="_blank"
+        >Elucidate</a>, the successor to this project.
+        This experimental project has been deprecated.
+      </h2>
 
 [![Crates.io](https://img.shields.io/crates/v/lucy.svg)](https://crates.io/crates/lucy)
 [![Docs.rs](https://docs.rs/lucy/badge.svg)](https://docs.rs/lucy)
@@ -14,6 +17,9 @@
 </div>
 
 ## Description
+        
+This project has been deprecated. Please see [elucidate](https://github.com/dark-fusion/elucidate),
+this project's successor.
 
 Lucy is a fast and efficient JSON parsing service for building data pipelines.
 
